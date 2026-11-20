@@ -84,8 +84,22 @@ def diffusion_training_loss(model, x0, t, noise, alphas_cumprod):
     loss=noise_prediction_loss(pred_noise,noise)
     return loss
 
-# Step 9 - timestep_embedding (not yet solved)
-# TODO: implement
+# Step 9 - timestep_embedding
+import torch
+import torch.nn.functional as F
+
+def timestep_embedding(t, dim: int):
+    # TODO: sinusoidal timestep embedding of shape (B, dim)
+    B=t.shape[0]
+    embd=torch.zeros([B,dim])
+    half=int(dim/2)
+    for i in range(B):
+        for j in range(dim):
+            if j<half:
+                embd[i,j]=torch.sin(torch.tensor(t[i]/10000**(j/dim)))
+            else:
+                embd[i,j]=torch.cos(torch.tensor(t[i]/10000**((j-1)/dim)))
+    return embd
 
 # Step 10 - init_tiny_unet (not yet solved)
 # TODO: implement
