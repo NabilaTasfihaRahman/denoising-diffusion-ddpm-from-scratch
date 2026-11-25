@@ -214,11 +214,24 @@ def ddpm_p_sample(x_t, t, params: dict, schedule: dict, noise=None):
     # TODO: one reverse step x_t -> x_{t-1}
     eps=tiny_unet_forward(x_t,t,params)
     mean,var,_=ddpm_p_mean_variance(x_t,t,eps,schedule)
-    x_prev=mean+torch.sqrt(var)*torch.where((t==0).reshape(-1,1,1,1),torch.zeros_like(noise),noise)
+    x_prev=mean+torch.sqrt(var)*torch.where((t==0).reshape(-1,1,1,1),torch.zeros_like(eps),noise)
     return x_prev
 
-# Step 18 - ddpm_sample_loop (not yet solved)
-# TODO: implement
+# Step 18 - ddpm_sample_loop
+import torch
+import torch.nn.functional as F
+
+def ddpm_sample_loop(params: dict, schedule: dict, shape: tuple, seed: int = 0):
+    # TODO: ancestral sampling from pure noise to x0
+    torch.manual_seed(seed)
+    x_t=torch.randn(shape)
+    B,_,_,_=x_t.shape
+    T=schedule['T']
+    for t in range(T-1,-1,-1):
+        t_batch=torch.full((B,),t)
+        x_hat=ddpm_p_sample(x_t,t_batch,params,schedule,noise=None)
+        x_t=x_hat
+    return x_hat
 
 # Step 19 - sample_quality_mse (not yet solved)
 # TODO: implement
