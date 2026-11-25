@@ -174,8 +174,16 @@ def make_blob_dataset(n: int = 128, size: int = 8, seed: int = 0):
 # Step 14 - train_ddpm (not yet solved)
 # TODO: implement
 
-# Step 15 - predict_x0_from_eps (not yet solved)
-# TODO: implement
+# Step 15 - predict_x0_from_eps
+import torch
+import torch.nn.functional as F
+
+def predict_x0_from_eps(x_t, t, eps, alphas_cumprod):
+    # TODO: invert the q_sample equation for x0
+    
+    alphas_cumprod=extract_into_batch(alphas_cumprod, t, x_t)
+    x0_hat=(x_t-torch.sqrt(1-alphas_cumprod)*eps)/torch.sqrt(alphas_cumprod)
+    return x0_hat
 
 # Step 16 - ddpm_p_mean_variance (not yet solved)
 # TODO: implement

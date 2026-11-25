@@ -24,7 +24,7 @@ python scaffold.py
 - [x] **12.** make_blob_dataset
 - [ ] **13.** ddpm_train_step
 - [ ] **14.** train_ddpm
-- [ ] **15.** predict_x0_from_eps
+- [x] **15.** predict_x0_from_eps
 - [ ] **16.** ddpm_p_mean_variance
 - [ ] **17.** ddpm_p_sample
 - [ ] **18.** ddpm_sample_loop
