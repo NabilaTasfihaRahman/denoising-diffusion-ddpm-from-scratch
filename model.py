@@ -214,6 +214,8 @@ def ddpm_p_sample(x_t, t, params: dict, schedule: dict, noise=None):
     # TODO: one reverse step x_t -> x_{t-1}
     eps=tiny_unet_forward(x_t,t,params)
     mean,var,_=ddpm_p_mean_variance(x_t,t,eps,schedule)
+    if noise is None:
+        noise=torch.randn_like(x_t)
     x_prev=mean+torch.sqrt(var)*torch.where((t==0).reshape(-1,1,1,1),torch.zeros_like(x_t),noise)
     return x_prev
 
