@@ -185,8 +185,26 @@ def predict_x0_from_eps(x_t, t, eps, alphas_cumprod):
     x0_hat=(x_t-torch.sqrt(1-alphas_cumprod)*eps)/torch.sqrt(alphas_cumprod)
     return x0_hat
 
-# Step 16 - ddpm_p_mean_variance (not yet solved)
-# TODO: implement
+# Step 16 - ddpm_p_mean_variance
+import torch
+import torch.nn.functional as F
+
+def ddpm_p_mean_variance(x_t, t, eps, schedule: dict):
+    # TODO: return (posterior_mean, variance, x0_hat)
+    alphas_cumprod=schedule['alphas_cumprod']
+    alphas=schedule['alphas']
+    betas=schedule['betas']
+    x0_hat=predict_x0_from_eps(x_t,t,eps,alphas_cumprod).clamp(min=-1,max=1)
+    alphas_cumprod_b_1=extract_into_batch(alphas_cumprod,(t-1).clamp(min=0),x_t)
+    alphas_cumprod_b=extract_into_batch(alphas_cumprod,t,x_t)
+    alphas_b=extract_into_batch(alphas,t,x_t)
+    betas=extract_into_batch(betas,t,x_t)
+    variance=betas
+    alphas_cumprod_b_1=torch.where((t==0).reshape(-1,1,1,1),torch.ones_like(alphas_cumprod_b_1),alphas_cumprod_b_1)
+    firstterm=(torch.sqrt(alphas_cumprod_b_1)*betas*x0_hat)/(1-alphas_cumprod_b)
+    second_term=torch.sqrt(alphas_b)*x_t*(1-alphas_cumprod_b_1)/(1-alphas_cumprod_b)
+    mean=firstterm+second_term
+    return (mean, variance, x0_hat)
 
 # Step 17 - ddpm_p_sample (not yet solved)
 # TODO: implement
