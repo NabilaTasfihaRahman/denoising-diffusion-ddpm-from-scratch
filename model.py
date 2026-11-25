@@ -231,7 +231,7 @@ def ddpm_sample_loop(params: dict, schedule: dict, shape: tuple, seed: int = 0):
     T=schedule['T']
     for t in range(T-1,-1,-1):
         t_batch=torch.full((B,),t)
-        x_hat=ddpm_p_sample(x_t,t_batch,params,schedule)
+        x_hat=ddpm_p_sample(x_t,t_batch,params,schedule,noise=None)
         x_t=x_hat
     return x_hat
 
